@@ -1,8 +1,5 @@
-
-from flask import Flask, render_template, request, Response, flash, redirect, url_for, abort
 from flask_sqlalchemy import SQLAlchemy
-app = Flask(__name__)
-db = SQLAlchemy(app)
+db = SQLAlchemy()
 
 class Show(db.Model):
     __tablename__ = 'show'

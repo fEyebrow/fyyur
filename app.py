@@ -28,10 +28,6 @@ db = SQLAlchemy(app)
 
 migrate = Migrate(app, db)
 
-#----------------------------------------------------------------------------#
-# Models.
-#----------------------------------------------------------------------------#
-
 class Show(db.Model):
     __tablename__ = 'show'
     id = db.Column(db.Integer, primary_key=True)
@@ -83,7 +79,6 @@ class Artist(db.Model):
     seeking_description = db.Column(db.String(120))
 
     shows = db.relationship('Show', backref=db.backref('artist', lazy=True))
-
 
 
 db.create_all()
@@ -282,7 +277,10 @@ def search_artists():
 @app.route('/artists/<int:artist_id>')
 def show_artist(artist_id):
   data = Artist.query.get(artist_id)
-  data.genres = str2list(data.genres)
+  print(type(data.genres)) 
+  if type(data.genres) == str:
+    data.genres = str2list(data.genres)
+  
   now = datetime.now()
   past_shows_data = Show.query.filter(Show.artist_id==data.id,Show.start_time<=now).all()
   upcoming_shows_data = Show.query.filter(Show.artist_id==data.id,Show.start_time>now).all()
@@ -304,7 +302,7 @@ def show_artist(artist_id):
     temp['venue_name'] = venue.name
     temp['venue_image_link'] = venue.image_link
     temp['start_time'] = s.start_time.strftime("%m/%d/%Y, %H:%M:%S")
-    past_shows.append(temp)
+    upcoming_shows.append(temp)
   
   data.past_shows = past_shows
   data.upcoming_shows = upcoming_shows
